@@ -1,0 +1,29 @@
+{
+  "name": "timewave",
+  "version": "0.0.1",
+  "description": "A tiny clock and date, period, or duration math library < 2k (minified/gzipped)",
+  "main": "timewave.js",
+  "scripts": {
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest ./test --detectOpenHandles"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anywhichway/timewave.git"
+  },
+  "keywords": [
+    "moment",
+    "luxon",
+    "time",
+    "duration",
+    "clock"
+  ],
+  "author": "Simon Y. Blackwell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/anywhichway/timewave/issues"
+  },
+  "homepage": "https://github.com/anywhichway/timewave#readme",
+  "devDependencies": {
+    "jest": "^28.1.0"
+  }
+}
