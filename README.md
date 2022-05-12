@@ -42,6 +42,13 @@ We will start with `D(uration)`, followed by `Period` and build up to `Clock`.
 
 #### D(uration)
 
+Why would you want to use a duration? So you can so this:
+
+```javascript
+const ms = D("1y 1w 1d").ms;
+const future = new Date(Date.now()+D("2y 1q"));
+```
+
 ##### D D(d:number|string|Clock|Date|Period)
 
 - If a number, then the duration is `d` milliseconds long.
@@ -51,7 +58,7 @@ We will start with `D(uration)`, followed by `Period` and build up to `Clock`.
 - If a Period, then the duration is `d.length` milliseonds.
 
 Durations have computed data members `ms`, `s`, `m`, `h`, `d`, `w`, `mo`, `q`, `y` that return the number of milliseconds,
-seconds, minutes, hours, days, weeks, months, quarters, and years in the period.
+seconds, minutes, hours, days, weeks, months, quarters, and years in the duration.
 
 ##### Array<D> D.max(D[,D ...])
 
