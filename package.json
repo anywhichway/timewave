@@ -1,10 +1,11 @@
 {
   "name": "timewave",
-  "version": "0.0.1",
-  "description": "A tiny clock and date, period, or duration math library < 2k (minified/gzipped)",
+  "version": "0.0.2",
+  "description": "A tiny time simulation and date/time math library < 2.5k (minified/gzipped)",
   "main": "timewave.js",
+  "type": "module",
   "scripts": {
-    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest ./test --detectOpenHandles"
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest ./ --detectOpenHandles"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/anywhichway/timewave/issues"
   },
-  "homepage": "https://github.com/anywhichway/timewave#readme",
+  "homepage": "https://timewave.dev",
   "devDependencies": {
     "jest": "^28.1.0"
   }

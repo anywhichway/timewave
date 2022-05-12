@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="module">
+    const {Clock,D,Period} = await import("./timewave.js");
+    console.log(JSON.stringify(D(D("1d") + D("1w") + D("1w 2d")).days));
+    const now = new Date(),
+    d = D(now) + D("1d"),
+    seattle = Clock(now,{tz:'America/Los_Angeles'}),
+    nyc = seattle.clone({tz:"America/New_York"}).start(),
+    chicago = seattle.clone({tz:"America/Chicago"}),
+    toronto = seattle.clone({tz:"America/Toronto"});
+    console.log(now,new Date(D(d)),new Date(d));
+    console.log(D(1) instanceof D);
+    console.log(now.getTime(),D(now,"ms").valueOf());
+    console.log(JSON.stringify(Clock(now).plus(D("1mo"))));
+    console.log(Clock(now).weekOfYear,Clock(now).dayOfYear);
+    console.log(nyc.toString());
+    console.log(toronto.toString());
+    console.log(chicago.toString());
+    console.log(seattle.toString());
+    console.log(Clock(nyc.getTime('America/Los_Angeles'),{tz:'America/Los_Angeles'}).toString());
+    setInterval(() => {
+        console.log(nyc.toString());
+    },15000);
+
+    const clock = Clock(now).minus("1y");
+    console.log(clock.getTime(),now.getTime()-D.durations.y);
+
+    seattle.start();
+    const time = await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(seattle.getTime())
+            },1000);
+        });
+    console.log(time,seattle.stats);
+
+    const p1 = Period({start:now,end:now.getTime()+D("1m")}),
+        p2 =  Period({start:now,end:now.getTime()+D("1y")}),
+        p3 =  Period({start:now,end:now.getTime()+D("1m")}),
+        mins = Period.min(p1,p2,p3);
+    console.log(mins);
+
+    console.log(Clock().clone({tz:"America/New_York"}).toString())
+</script>
+</body>
+</html>
