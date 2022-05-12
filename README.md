@@ -1,4 +1,5 @@
-# timewave
+# timewave v0.1.1
+
 A tiny time simulation and date/time math library < 2.5k (minified/gzipped)
 
 ```javascript
@@ -307,6 +308,8 @@ We may implement a separately imported IANA look-up given sufficient demand.
 ### Change History
 
 Reverse Chronological Order
+
+2022-05-13 v0.1.1 Updated docs.
 
 2022-05-13 v0.1.0 Unit test coverage of over 85%. Added alarms and more options for stopping and starting Clocks along 
 with Clock stats collection. Comprehensive documentation.

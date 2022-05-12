@@ -1,6 +1,6 @@
 {
   "name": "timewave",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tiny time simulation and date/time math library < 2.5k (minified/gzipped)",
   "main": "timewave.js",
   "type": "module",
