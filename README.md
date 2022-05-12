@@ -23,6 +23,12 @@ increments 5 seconds for every one second of real time.
 - Periods (from time x to time y) that can be adjusted and shifted in pure or mutating mode
 - Alarms that can be invoked when a clock hits a specific time or is within a range
 
+If you like `timewave`, check out:
+
+- [Lightview](https://lightview.dev) - Small, simple, powerful web UI and micro front end creation ... Great ideas from Svelte, React, Vue and Riot combined.
+- [Watchlight](https://watchlight.dev) - Beyond the UI ... a light weight, comprehensive, reactive framework for business logic.
+- [Nano-memoize](https://github.com/anywhichway/nano-memoize) - Faster than fast, smaller than micro ... nano-memoizer.
+
 ## Getting Started
 
 Install from [NPMJS](https://www.npmjs.com/package/timewave) or [GitHub](https://github.com/anywhichway/timewave).
