@@ -118,7 +118,8 @@ D("1y 1w 1d"); // you do the math!
 
 ##### Basic Duration Math
 
-Basic duration math is conducted directly in Javascript using standard math operators. The result is always a number of milliseconds.
+Basic duration math is conducted directly in Javascript using standard math operators. The result is always a number of milliseconds. 
+Because basic durations do not have an associated date object, they do not need to account for DST and leap years.
 
 ```javascript
 const d = D("1m") + D("1s") + 1000; // d will be 62000
@@ -139,15 +140,17 @@ const d1 = D(D("1m") + D("1s") + 1000).ms; // d1 will be "62000ms"
 - If `start` or `end` is a number it is converted to a Date and used for the start or end of the Period. 
 - When a number is used for `start` or `end`, you can effectively ignore that a Date is used internally, since it is the 
 difference between the two that is relevant to computations. The values are stored as Dates for the convenience of the
-developer so that they can perhaps be used for other purposes and/or to maintain clarity of application code.
+developer so that they can perhaps be used for other purposes and/or to maintain clarity of application code. It also makes
+`Period` DST and leap year preserving.
 
-Periods have computed data members `ms`, `s`, `m`, `h`, `d`, `w`, `mo`, `q`, `y` that return the number of milliseconds, 
+A 'Period' has computed data members `ms`, `s`, `m`, `h`, `d`, `w`, `mo`, `q`, `y` for the milliseconds, 
 seconds, minutes, hours, days, weeks, months, quarters, and years in the period.
 
-##### Period p.extend(milliseconds:Duration|number)
+##### Period p.extend(amount:D|number)
 
-- If `milliseconds` is negative, moves the `start` the specified number of milliseconds back in time.
-- If `milliseconds` is positive, moves the `end` the specified number of milliseconds forward in time.
+- If `amount` is negative, moves the `start` the `amount` back in time.
+- If `amount` is positive, moves the `end` the ``amount` forward in time.
+- If a `D` is used, the movement is DST and leap year preserving.
 
 ##### Array<Period> Period.max(Period[,Period ...])
 
@@ -157,14 +160,15 @@ seconds, minutes, hours, days, weeks, months, quarters, and years in the period.
 
 - A static method of `Period` that returns an `Array` of `Period` that are the minimum ones of the periods provided. All the returned periods will contain the same number of milliseconds.
 
-##### Period p.shift(milliseconds:Duration|number)
+##### Period p.shift(amount:D|number)
 
-- If `milliseconds` is negative, moves the `start` and `end` the specified number of milliseconds back in time.
-- If `milliseconds` is positive, moves the `start` and `end` the specified number of milliseconds forward in time.
+- If `amount` is negative, moves the `start` and `end` the `amount` back in time.
+- If `amount` is positive, moves the `start` and `end` the `amount` forward in time.
+- If a `D` is used, the movement is DST and leap year preserving.
 
 #### Clock                                                                                              
 
-##### Clock Clock(?initialDate:Date|number=Date.now(),{?tz:string,?hz:number=60,?tick:number=1000/hz,?run:boolean=false,?sync:boolean=true})
+##### Clock Clock(?initialDate:Date|number=Date.now(),{?tz:string,?hz:number=60,?tick:number|string|D|Period=1000/hz,?run:boolean=false,?sync:boolean=true})
 
 - Creates a `Clock`, which will be an `instanceof` and `Date`, but not a `Clock`, since it is just a `Proxy` around a `Date`.
 - Clocks generally behave like `DateTime` in `Luxon` and other libraries. We call them Clocks because they can also run.
@@ -173,7 +177,8 @@ epoch. If you are building a stopwatch that has no regard for actual time, using
 - `tz` is an [IANA timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 - `hz` is the number of times per second the time should be updated if the clock is running.
 - `tick` is the amount of time that should be added (subtracted if negative) from the time at each update. To run faster
-than normal, make this number bigger than `1000 / hz` to make it slower, make is smaller than `1000 / hz`.
+than normal, make this number bigger than `1000 / hz` to make it slower, make is smaller than `1000 / hz`. If a `number` or `Period` is
+provided, then milliseconds are used. If a `string` parseable as a `D` (duration) or a `D` is used, DST and leapyear preserving math is used.
 - `run`, if true, starts running the clock as soon as ity is created.
 - `sync`, if true (the default), will use system time to sync the clock at each refresh in case the interval running the refresh a `hz` rate
 is unable to keep up or there are breakpoints in the code that slow execution.
@@ -231,7 +236,7 @@ const clock = Clock(),
     chms = clock.getTime("America/Chicago");
 ```
 
-##### Clock c.clone({?tz:string=sourceTz,?hz:number=sourceHz,?tick:number=sourceTick,?run:boolean=sourceRun,?sync:boolean=sourceSync,?alarms:Array=sourceAlarms})
+##### Clock c.clone({?tz:string=sourceTz,?hz:number=sourceHz,?tick:number|string|D|Period=sourceTick,?run:boolean=sourceRun,?sync:boolean=sourceSync,?alarms:Array=sourceAlarms})
 
 - Creates a new clock with copies of the source values. Typically, you would clone as follows:
 
@@ -253,20 +258,22 @@ const clone = myClock.clone({tz:<some new tz>,alarms:[]});
 
 - A static method of `Clock` that returns an `Array` of `Clock` that have the minimum times of the clocks provided. All the returned periods will contain the same UTC time.
 
-##### Clock c.minus(milliseconds:number|string|D|Period)
+##### Clock c.minus(amount:number|string|D|Period)
 
-- Adjusts the clock back by the milliseconds. If a `string` is provided, it must be parseable as a `D`, i.e. duration.
+- Adjusts the clock back by the provided `amount`. If a `string` is provided, it must be parseable as a `D`, i.e. duration.
+- If a `number` or `Period`, then milliseconds is used. Otherwise, DST and leap year maintaining math is used.
 - This is impure, i.e. it mutates the Clock. Clone the clock first to avoid mutation.
 
-##### Clock c.plus(milliseconds:number|string|D|Period)
+##### Clock c.plus(amount:number|string|D|Period)
 
-- Adjusts the clock forward by the milliseconds. If a `string` is provided, it must be parseable as a `D`, i.e. duration.
+- Adjusts the clock forward by the `amount`. If a `string` is provided, it must be parseable as a `D`, i.e. duration.
+- If a `number` or `Period`, then milliseconds is used. Otherwise, DST and leap year maintaining math is used.
 - This is impure, i.e. it mutates the Clock. Clone the clock first to avoid mutation.
 
-##### Clock c.reset({hz:number,tick:number,sync:boolean,run:boolean=false}={})
+##### Clock c.reset({hz:number,tick:number|string|D|Period,sync:boolean,run:boolean=false}={})
 
 - Resets the clock to its `initialTime`. Useful for implementing stop watches or times trials.
-- If `hz`, `tick`, or `sync` are provided they change the clock. 
+- If `hz`, `tick`, or `sync` are provided they change how the clock is run.
 - The clock can be restarted with `run` after the reset.
 
 ##### Clock c.setAlarm({for:Date|Period},callback:(clock:Clock,complete:boolean) => {...},?name:string=callback.name)
@@ -290,24 +297,29 @@ of the period, the complete flag will be true.
 
 Current test coverage is shown below:
  
-|File         | % Stmts | % Branch | % Funcs | % Lines |                                                                                                                                                                                                                                         
+| File        | % Stmts | % Branch | % Funcs | % Lines |                                                                                                                                                                                                                                         
 |-------------|---------|----------|---------|---------|
-|All files    |   96.21 |    88.08 |   86.27 |     100 |                                                               
-|timewave.js  |   96.21 |    88.08 |   86.27 |     100 | 
+| All files   |   88.73 |    84.79 |   77.46 |   90.03 |                                                                                              
+| timewave.js |   88.73 |    84.79 |   77.46 |   90.03 |
 
 ### Architecture
 
-Why do we use a Proxy around Date for Clock? It makes for a very small and efficient code base that is easy to test.
+Why do we use a Proxy around Date for Clock? It makes for a very small and efficient code base that is easy to test. And,
+it allows us to delegate most leap year and leap second processing to the native JavaScript Date object.
 
 Why do we use IANA names in the parenthetical portion of a Clock time string? It makes for a very small code base. 
 We do not want to ship an IANA look-up table. And, technically the parenthetical portion of a Date string is an optional 
-part of the Javascript spec. The loss is you do not know anything about DST in the Clock.
+part of the Javascript spec.
 
 We may implement a separately imported IANA look-up given sufficient demand.
 
 ### Change History
 
 Reverse Chronological Order
+
+2022-05-13 v0.1.2 Eliminated fixed use of tx offset internally. Now called every time it is needed in case DST goes into effect
+during the life of a Clock or Period. Improved date calculations for year, quarter, month, week, day. Added DST to Clock
+string representation.
 
 2022-05-13 v0.1.1 Updated docs.
 

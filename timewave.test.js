@@ -95,11 +95,132 @@ test("Clock - offset",() => {
     expect(clock.offset).toBe(now.getTimezoneOffset());
 });
 
-test("Clock - plus",() => {
-    const now = new Date(),
-        clock = Clock(now).plus("1y");
-    expect(clock.getTime()).toBe(Math.round(now.getTime()+D.durations.y));
+test("Clock - plus year",() => {
+    const date = new Date(2022,11,31),
+        clock = Clock(date).plus("1y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()+1);
+    ["Month","Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+})
+
+test("Clock - plus fractional year under",() => {
+    const date = new Date(2022,11,30),
+        clock = Clock(date).plus(".49y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()+1);
+    expect(clock.getMonth()).toBe(5);
 });
+
+test("Clock - plus fractional year over",() => {
+    const date = new Date(2022,11,30),
+        clock = Clock(date).plus(".5y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()+1);
+    expect(clock.getMonth()).toBe(6);
+});
+
+test("Clock - plus 6mo",() => {
+    const date = new Date(2022,11,30),
+        clock = Clock(date).plus("6mo");
+    expect(clock.getFullYear()).toBe(date.getFullYear()+1);
+    expect(clock.getMonth()).toBe(5);
+});
+
+test("Clock - plus year on leapyear",() => {
+    const date = new Date(2020,1,29),
+        clock = Clock(date).plus("1y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()+1);
+    expect(clock.getDate()).toBe(28);
+    ["Month","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - plus month",() => {
+    const date = new Date(2022,10,30),
+        clock = Clock(date).plus("1mo");
+    expect(clock.getMonth()).toBe(date.getMonth()+1);
+    ["Year","Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - plus month on boundary",() => {
+    const date = new Date(2022,11,30),
+        clock = Clock(date).plus("1mo");
+    expect(clock.getMonth()).toBe(0);
+    expect(clock.getFullYear()).toBe(date.getFullYear()+1);
+    ["Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - plus day on boundary",() => {
+    const date = new Date(2022,11,31),
+        clock = Clock(date).plus("1d");
+    expect(clock.getDate()).toBe(1);
+    expect(clock.getMonth()).toBe(0);
+    expect(clock.getFullYear()).toBe(date.getFullYear()+1);
+    ["Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - plus negative year",() => {
+    const date = new Date(2022,11,31),
+        clock = Clock(date).plus("-1y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()-1);
+    ["Month","Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - plus negative year on leapyear",() => {
+    const date = new Date(2020,1,29),
+        clock = Clock(date).plus("-1y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()-1);
+    expect(clock.getDate()).toBe(28);
+    ["Month","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - plus negative month",() => {
+    const date = new Date(2022,10,30),
+        clock = Clock(date).plus("-1mo");
+    expect(clock.getMonth()).toBe(date.getMonth()-1);
+    ["Year","Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - plus negative month on boundary",() => {
+    const date = new Date(2022,0,30),
+        clock = Clock(date).plus("-1mo");
+    expect(clock.getMonth()).toBe(11);
+    expect(clock.getFullYear()).toBe(date.getFullYear()-1);
+    ["Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
 
 test("Clock - plus throw", () => {
     expect(() => {
@@ -112,10 +233,63 @@ test("Clock - plus throw", () => {
     }).toThrow(TypeError );
 })
 
-test("Clock - minus",() => {
-    const now = new Date(),
-        clock = Clock(now).minus("1y");
-    expect(clock.getTime()).toBe(Math.trunc(now.getTime()-D.durations.y));
+test("Clock - minus year",() => {
+    const date = new Date(2022,11,31),
+        clock = Clock(date).minus("1y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()-1);
+    ["Month","Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - minus year on leapyear",() => {
+    const date = new Date(2020,1,29),
+        clock = Clock(date).minus("1y");
+    expect(clock.getFullYear()).toBe(date.getFullYear()-1);
+    expect(clock.getDate()).toBe(28);
+    ["Month","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - minus month",() => {
+    const date = new Date(2022,10,30),
+        clock = Clock(date).minus("1mo");
+    expect(clock.getMonth()).toBe(date.getMonth()-1);
+    ["Year","Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - minus month on boundary",() => {
+    const date = new Date(2022,0,30),
+        clock = Clock(date).minus("1mo");
+    expect(clock.getMonth()).toBe(11);
+    expect(clock.getFullYear()).toBe(date.getFullYear()-1);
+    ["Date","Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
+});
+
+test("Clock - minus day on boundary",() => {
+    const date = new Date(2022,11,1),
+        clock = Clock(date).minus("1d");
+    expect(clock.getDate()).toBe(30);
+    expect(clock.getMonth()).toBe(10);
+    expect(clock.getFullYear()).toBe(date.getFullYear());
+    ["Hours","Minutes","Seconds","Milliseconds"]
+        .forEach((period) => {
+            const fname = "get"+period;
+            expect(clock[fname]()).toBe(date[fname]());
+        })
 });
 
 test("Clock - weekOfYear",() => {
@@ -132,7 +306,7 @@ test("Clock - toString",() => {
         hours = `${Math.round(offset / 60)}`.padStart(2,"0"),
         minutes = `${offset % 60}`.padStart(2,"0"),
         gmt = `GMT${offset<=0 ? "+" : "-"}${hours}${minutes}`;
-    expect(str.includes("(America/New_York)")).toBe(true);
+    expect(str.includes("America/New_York")).toBe(true);
     expect(str.includes(gmt)).toBe(true);
 });
 
@@ -218,7 +392,7 @@ test("Clock - run",async () => {
     expect(cycle.tick).toBe(stats.tick);
     expect(cycle.sync).toBe(stats.sync);
     expect(cycle.time.start).toBeGreaterThanOrEqual(now.getTime());
-    expect(cycle.time.start).toBeLessThanOrEqual(now.getTime()+1);
+    expect(cycle.time.start).toBeLessThanOrEqual(now.getTime()+2);
     expect(cycle.time.stop).toBe(undefined);
     expect(cycle.clockTime.start).toBe(start);
     expect(cycle.clockTime.stop).toBe(undefined);
@@ -435,49 +609,53 @@ test("P - to Date throw", () => {
 
 test("P - shift", () => {
     const now = Date.now(),
-        p1 = Period({start:now,end:now+D("1y")}),
+        p1 = Period({start:now,end:Clock().plus("1y")}),
         p2 = p1.shift(D("1y"));
     expect(p1.end.getTime()).toBe(p2.start.getTime());
 })
 
 test("P - shift impure", () => {
     const now = Date.now(),
-        p1 = Period({start:now,end:now+D("1y")}),
-        p1end = p1.end.getTime(),
-        p2 = p1.shift(D("1y"),{pure:false});
-    expect(p1end).toBe(p2.start.getTime());
+        p1 = Period({start:new Clock(now),end:now+D("1y")}),
+        start = p1.start.getTime(),
+        end = p1.end.getTime(),
+        p2 = p1.shift(D("1y"),{pure:false})
+    expect(p1).toBe(p2);
+    expect(p2.start.minus("1y").getTime()).toBe(start);
+    expect(p2.end.minus("1y").getTime()).toBe(end);
+    //expect(Clock(end).plus("1y").getTime()).toBe(p2.end.getTime());
 })
 
 test("P - extend forward", () => {
     const now = Date.now(),
-        p1 = Period({start:now,end:now+D("1y")}),
+        p1 = Period({start:Clock(now),end:Clock(now).plus("1y")}),
         p2 = p1.extend(D("1y"));
-    expect(p2.end.getTime()).toBe(Math.round(p1.end.getTime()+D("1y")));
+    expect(p2.end.getTime()).toBe(p1.end.plus(D("1y")).getTime());
 })
 
 test("P - extend forward impure", () => {
     const now = Date.now(),
-        p1 = Period({start:now,end:now+D("1y")}),
-        p1end = p1.end.getTime(),
+        p1 = Period({start:Clock(now),end:Clock(now)}),
+        end = p1.end.getTime(),
         p2 = p1.extend(D("1y"),{pure:false});
-    expect(p2.end.getTime()).toBe(Math.round(p1end+D("1y")));
+    expect(p1).toBe(p2);
+    expect(p2.end.getTime()).toBe(Clock(now).plus("1y").getTime());
 })
 
 test("P - extend backward", () => {
     const now = Date.now(),
-        p1 = Period({start:now,end:now+D("1y")}),
+        p1 = Period({start:Clock(now),end:Clock(now).plus(D("1y"))}),
         p2 = p1.extend(D("-1y"));
-    expect(p2.start.getTime()).toBeGreaterThanOrEqual(Math.round((p1.start.getTime()+D("-1y"))-1));
-    expect(p2.start.getTime()).toBeLessThanOrEqual(Math.round(p1.start.getTime()+D("-1y")));
+    expect(p2.start.getTime()).toBe(p1.start.minus(D("1y")).getTime());
 })
 
 test("P - extend backward impure", () => {
     const now = Date.now(),
         p1 = Period({start:now,end:now+D("1y")}),
-        p1start = p1.start.getTime(),
+        start = p1.start.getTime(),
         p2 = p1.extend(D("-1y"),{pure:false});
-    expect(p2.start.getTime()).toBeGreaterThanOrEqual(Math.round((p1start+D("-1y"))-1));
-    expect(p2.start.getTime()).toBeLessThanOrEqual(Math.round(p1start+D("-1y")));
+    expect(p1).toBe(p2);
+    expect(p2.start.plus("1y").getTime()).toBe(start);
 })
 
 test("P - throw",() => {
