@@ -1,6 +1,6 @@
-# timewave v0.1.1
+# timewave v0.1.3
 
-A tiny time simulation and date/time math library < 2.5k (minified/gzipped)
+A tiny time simulation and date/time math library < 3k (minified/gzipped)
 
 ```javascript
 const clock = Clock(new Date(2022,1,1),{tz:'America/New_York',hz:1,tick:1000,run:true}) // refresh every second
@@ -316,6 +316,8 @@ We may implement a separately imported IANA look-up given sufficient demand.
 ### Change History
 
 Reverse Chronological Order
+
+2022-05-13 v0.1.3 Updated docs.
 
 2022-05-13 v0.1.2 Eliminated fixed use of tx offset internally. Now called every time it is needed in case DST goes into effect
 during the life of a Clock or Period. Improved date calculations for year, quarter, month, week, day. Added DST to Clock
