@@ -1,4 +1,4 @@
-# timewave v0.1.3
+# timewave v0.1.4
 
 A tiny time simulation and date/time math library < 3k (minified/gzipped)
 
@@ -10,7 +10,7 @@ const clock = Clock(new Date(2022,1,1),{tz:'America/New_York',hz:1,tick:1000,run
 
 Small enough for every day date/time math. Powerful enough for games and simulations.
 
-Timewave provides much of the same functionality as MomentJS and its replacement [Luzxon](https://moment.github.io/luxon/#/) in a smaller package.
+Timewave provides much of the same functionality as MomentJS and its replacement [Luxon](https://moment.github.io/luxon/#/) in a smaller package.
 
 Timewave also provides the ability to create and run clocks in different timezones or at different refresh rates and speeds, e.g. you can have a clock that
 increments 5 seconds for every one second of real time.
@@ -179,19 +179,20 @@ epoch. If you are building a stopwatch that has no regard for actual time, using
 - `tick` is the amount of time that should be added (subtracted if negative) from the time at each update. To run faster
 than normal, make this number bigger than `1000 / hz` to make it slower, make is smaller than `1000 / hz`. If a `number` or `Period` is
 provided, then milliseconds are used. If a `string` parseable as a `D` (duration) or a `D` is used, DST and leapyear preserving math is used.
-- `run`, if true, starts running the clock as soon as ity is created.
-- `sync`, if true (the default), will use system time to sync the clock at each refresh in case the interval running the refresh a `hz` rate
-is unable to keep up or there are breakpoints in the code that slow execution.
+- `run`, if true, starts running the clock as soon as it is created.
+- `sync`, if true (the default), will use system time to sync the clock at each refresh in case the interval running the refresh 
+at `hz` rate is unable to keep up or there are breakpoints in the code that slow execution.
 
-Note, when you provide `new Date()` or `Date.now()` as the `initialDate` along with a timezone it IS NOT adjusted. The clock treats the Date provided
+Note, when you provide `new Date()` or `Date.now()` as the `initialDate` along with a timezone it IS NOT adjusted. The Clock treats the Date provided
 as the Date in the timezone. For example:
 
 ```javascript
 const now = new Date(), // assume this is Thu May 12 2022 09:46:27 GMT-0700 (Pacific Daylight Time)
-    nyc = Clock(now,{tz:"America/New_York"}); // this will be Thu May 12 2022 09:46:27 GMT-0400 (America/New_York)
+    nyc = Clock(now,{tz:"America/New_York"}); // this will be Thu May 12 2022 09:46:27 GMT-0400 (America/New_York Daylight Time)
 ```
 
-Why does `Clock` behave this way? Well, what would you expect if you did the below? `new Date()` is just a special dynamic case of the same thing.
+Why does `Clock` behave this way? Well, what would you expect if you did the below? `new Date()` is just a special dynamic 
+case of the same thing.
 
 ```javascript
 const date = new Date("1776-07-04 16:00"),
@@ -220,6 +221,7 @@ These additional properties are also available:
 - `dayOfYear`
 - `ordinal` (same as dayOfYear)
 - `isInLeapYear`
+- 'isInDST'
 - `offset` (timezone offset in minutes)
 - `weekOfYear`
 - `stats` (info about stops and starts)
@@ -274,13 +276,13 @@ const clone = myClock.clone({tz:<some new tz>,alarms:[]});
 
 - Resets the clock to its `initialTime`. Useful for implementing stop watches or times trials.
 - If `hz`, `tick`, or `sync` are provided they change how the clock is run.
-- The clock can be restarted with `run` after the reset.
+- The clock can be restarted with `run = true`  after the reset.
 
 ##### Clock c.setAlarm({for:Date|Period},callback:(clock:Clock,complete:boolean) => {...},?name:string=callback.name)
 
-- Invokes the `callback` when the clock time matches the Date or Period. The `callback` is invoked with the clock as the first
+- Invokes the `callback` when the Clock time matches the `for` Date or Period. The `callback` is invoked with the Clock as the first
 argument and whether the Clock considers the alarm complete for the second. For dates this will always be `true`. For periods
-the callback will be invoked multiple times depending on the clock refresh rate and tick size. Once the clock goes beyond the upper bound
+the callback will be invoked multiple times depending on the clock refresh rate and tick size. Once the Clock goes beyond the upper bound
 of the period, the complete flag will be true.
 - It is not currently possible to remove alarms. This is under development.
 
@@ -316,6 +318,8 @@ We may implement a separately imported IANA look-up given sufficient demand.
 ### Change History
 
 Reverse Chronological Order
+
+2022-05-20 v0.1.4 README typo correction
 
 2022-05-13 v0.1.3 Updated docs.
 

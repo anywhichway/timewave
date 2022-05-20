@@ -319,6 +319,78 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 newDate = new Date(date.getTime() + offset * 1000 * 60)
             return new Clock(newDate,{tz,hz,tick,alarms});
         },
+        endOf(period) {
+            if(period.length>2) period = durations[period+"s"];
+            const ms = date.getTime();
+            if(period==="s") {
+                date.setMilliseconds(999);
+            } else if(period==="m") {
+                date.setSeconds(59);
+                date.setMilliseconds(999);
+            } else if(period==="h")  {
+                date.setMinutes(59);
+                date.setSeconds(59);
+                date.setMilliseconds(999);
+            } else if(period==="d") {
+                date.setHours(59);
+                date.setMinutes(59);
+                date.setSeconds(59);
+                date.setMilliseconds(999);
+            } else if(period==="w") {
+
+            } else if(period==="mo") {
+                date.setHours(59);
+                date.setMinutes(59);
+                date.setSeconds(59);
+                date.setMilliseconds(999)
+                date.setDate(proxy.daysInMonth);
+            } else if(period==="q") {
+
+            } else if(period==="y") {
+                date.setHours(59);
+                date.setMinutes(59);
+                date.setSeconds(59);
+                date.setMilliseconds(999)
+                date.setDate(proxy.daysInMonth);
+                date.setMonth(11);
+            }
+        },
+        startOf(period) {
+            if(period.length>2) period = durations[period+"s"];
+            const ms = date.getTime();
+            if(period==="s") {
+                date.setMilliseconds(0);
+            } else if(period==="m") {
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+            } else if(period==="h")  {
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+            } else if(period==="d") {
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+            } else if(period==="w") {
+
+            } else if(period==="mo") {
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0)
+                date.setDate(1);
+            } else if(period==="q") {
+
+            } else if(period==="y") {
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0)
+                date.setDate(1);
+                date.setMonth(0);
+            }
+        },
         getTimezoneOffset() {
             const thereLocaleStr = date.toLocaleString('en-US', {timeZone: tz}),
                 thereDate = new Date(thereLocaleStr),
@@ -553,5 +625,7 @@ Period.prototype.extend = function(amount,{pure=true}={}) {
     }
     return this;
 }
-
+// intersection
+// union
+// difference
 export {Clock,Period,D}
