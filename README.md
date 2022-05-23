@@ -221,7 +221,7 @@ These additional properties are also available:
 - `dayOfYear`
 - `ordinal` (same as dayOfYear)
 - `isInLeapYear`
-- 'isInDST'
+- `isInDST`
 - `offset` (timezone offset in minutes)
 - `weekOfYear`
 - `stats` (info about stops and starts)
