@@ -149,7 +149,7 @@ seconds, minutes, hours, days, weeks, months, quarters, and years in the period.
 ##### Period p.extend(amount:D|number)
 
 - If `amount` is negative, moves the `start` the `amount` back in time.
-- If `amount` is positive, moves the `end` the ``amount` forward in time.
+- If `amount` is positive, moves the `end` the `amount` forward in time.
 - If a `D` is used, the movement is DST and leap year preserving.
 
 ##### Array<Period> Period.max(Period[,Period ...])
@@ -221,7 +221,7 @@ These additional properties are also available:
 - `dayOfYear`
 - `ordinal` (same as dayOfYear)
 - `isInLeapYear`
-- 'isInDST'
+- `isInDST`
 - `offset` (timezone offset in minutes)
 - `weekOfYear`
 - `stats` (info about stops and starts)
