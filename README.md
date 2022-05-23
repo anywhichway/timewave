@@ -59,7 +59,7 @@ const future = new Date(Date.now()+D("2y 1q"));
 ##### D D(d:number|string|Clock|Date|Period)
 
 - If a number, then the duration is `d` milliseconds long.
-- If a string, it must be property formatted. See below.
+- If a string, it must be properly formatted. See below.
 - A Clock is just a Date. See next line.
 - If a Date, then the duration is the return value of `d.getTime()`, i.e. number milliseconds from the start of the epoch.
 - If a Period, then the duration is `d.length` milliseonds.
@@ -78,12 +78,12 @@ seconds, minutes, hours, days, weeks, months, quarters, and years in the duratio
 ##### D d.minus(D)
 
 - Subtracts a duration from another duration and returns a new duration. The function is `pure`, i.e. the duration on which the method is called is not modified.
-- Consider using the basic match approach and JavaScript operators as described below rather than `minus`.
+- Consider using the basic math approach and JavaScript operators as described below rather than `minus`.
 
 ##### D d.plus(D)
 
 - Adds a duration to another duration and returns a new duration. The function is `pure`, i.e. the duration on which the method is called is not modified.
-- Consider using the basic match approach and JavaScript operators as described below rather than `plus`.
+- Consider using the basic math approach and JavaScript operators as described below rather than `plus`.
 
 ##### Formatting Durations
 
