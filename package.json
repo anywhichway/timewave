@@ -1,10 +1,13 @@
 {
   "name": "timewave",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A tiny time simulation and date/time math library < 2.5k (minified/gzipped)",
   "main": "timewave.js",
   "type": "module",
   "scripts": {
+    "publish":  "webpack --mode=production",
+    "build": "webpack --mode=production",
+    "build-dev": "webpack --mode=development",
     "test": "set NODE_OPTIONS=--experimental-vm-modules && jest ./ --detectOpenHandles"
   },
   "repository": {
@@ -25,6 +28,8 @@
   },
   "homepage": "https://timewave.dev",
   "devDependencies": {
-    "jest": "^28.1.0"
+    "jest": "^28.1.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   }
 }

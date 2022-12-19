@@ -628,4 +628,9 @@ Period.prototype.extend = function(amount,{pure=true}={}) {
 // intersection
 // union
 // difference
-export {Clock,Period,D}
+const Timewave = {
+    Clock,
+    Period,
+    D
+};
+export {Clock,Period,D,Timewave as default}

@@ -177,7 +177,7 @@ epoch. If you are building a stopwatch that has no regard for actual time, using
 - `tz` is an [IANA timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 - `hz` is the number of times per second the time should be updated if the clock is running.
 - `tick` is the amount of time that should be added (subtracted if negative) from the time at each update. To run faster
-than normal, make this number bigger than `1000 / hz` to make it slower, make is smaller than `1000 / hz`. If a `number` or `Period` is
+than normal, make this number bigger than `1000 / hz` to make it slower, make it smaller than `1000 / hz`. If a `number` or `Period` is
 provided, then milliseconds are used. If a `string` parseable as a `D` (duration) or a `D` is used, DST and leapyear preserving math is used.
 - `run`, if true, starts running the clock as soon as it is created.
 - `sync`, if true (the default), will use system time to sync the clock at each refresh in case the interval running the refresh 
@@ -318,6 +318,8 @@ We may implement a separately imported IANA look-up given sufficient demand.
 ### Change History
 
 Reverse Chronological Order
+
+2022-12-18 v0.1.6 Added browser build
 
 2022-05-20 v0.1.4 README typo correction
 
