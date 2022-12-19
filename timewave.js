@@ -633,4 +633,7 @@ const Timewave = {
     Period,
     D
 };
+if(typeof(self)!=="undefined") {
+    self.Timewave = Timewave;
+}
 export {Clock,Period,D,Timewave as default}

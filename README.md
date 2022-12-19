@@ -319,6 +319,8 @@ We may implement a separately imported IANA look-up given sufficient demand.
 
 Reverse Chronological Order
 
+2022-12-18 v0.1.7 Refined browser build to operate with WebWorker
+
 2022-12-18 v0.1.6 Added browser build
 
 2022-05-20 v0.1.4 README typo correction
