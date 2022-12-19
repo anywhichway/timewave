@@ -555,10 +555,10 @@ D.prototype.to = function(type="ms") {
 }
 Object.entries(durations).forEach(([key,value]) => {
     Object.defineProperty(D.prototype,key,{get:function() { return this.to(value); }})
+    if(value!=="ms") Object.defineProperty(D.prototype,value,{get:function() { return this.to(value); }})
 })
 Object.defineProperty(D.prototype,"Date",{get:function() { return this.to("Date");}})
 D.durations = durationMilliseconds;
-
 
 function Period({start,end}) {
     if(!this || !(this instanceof Period)) return new Period({start,end});
@@ -595,9 +595,15 @@ function Period({start,end}) {
 Period.is = (value) => value && typeof(value)==="object" && value instanceof Period;
 Period.min = D.min;
 Period.max = D.max;
-Period.prototype.to = D.prototype.to;
+Period.prototype.to = function(duration) {
+    if(Object.entries(durations).some(([key,value]) => duration===key || duration===value)) {
+        return (new D(this.length)).to(duration);
+    }
+    throw new TypeError(`${duration} is not a valid duration type`);
+};
 Object.entries(durations).forEach(([key,value]) => {
     Object.defineProperty(Period.prototype,key,{get:function() { return this.to(value); }})
+    Object.defineProperty(Period.prototype,value,{get:function() { return this.to(value); }})
 });
 Period.prototype.shift = function(amount,{pure=true}={}) {
     if(pure) {

@@ -578,6 +578,16 @@ test("D - min", () => {
     expect(mins[1]).toBe(d3);
 })
 
+for(const [key,value] of Object.entries(D.durations)) {
+    const d = D("1"+key);
+    test(`D - ${key} to`,() => {
+        expect(d[key]).toBe(d.to(key));
+    })
+    test(`D - ${key}`,() => {
+        expect(d.ms).toBe(value);
+    })
+}
+
 test("P - create", () => {
     const now = Date.now(),
         p1 = Period({start:now,end:now+D("1y")}),
@@ -685,6 +695,13 @@ test("P - min", () => {
     expect(mins[0]).toBe(p1);
     expect(mins[1]).toBe(p3);
 })
+
+const p = new Period({start:1,end:50000})
+for(const [key,value] of Object.entries(D.durations)) {
+    test(`P - ${key} to`,() => {
+        expect(p[key]).toBe(p.to(key));
+    })
+}
 
 
 

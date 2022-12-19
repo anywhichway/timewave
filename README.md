@@ -1,6 +1,6 @@
-# timewave v0.1.4
+# timewave v0.1.8
 
-A tiny time simulation and date/time math library < 3k (minified/gzipped)
+A tiny time simulation and date/time math library < 3.75K (minified/gzipped)
 
 ```javascript
 const clock = Clock(new Date(2022,1,1),{tz:'America/New_York',hz:1,tick:1000,run:true}) // refresh every second
@@ -36,7 +36,7 @@ Install from [NPMJS](https://www.npmjs.com/package/timewave) or [GitHub](https:/
 
 The file `timewave.js` in the root directory exports `Clock`,`D`, and `Period`. `D` is for Duration.
 
-Transpiling is left to the consumer. However, the code will run directly in contemporary browsers.
+The code will run directly in contemporary browsers using modules. There is a browser version that also creates a global Timewave with the properties `Clock`, `Period` and `D`.
 
 `Clock` is a psuedo-class. It is a Proxy around a `Date` object. Nothing will ever be an `instanceof` a Clock. A
 `Clock` is an `instanceof` a `Date`.
@@ -65,7 +65,7 @@ const future = new Date(Date.now()+D("2y 1q"));
 - If a Period, then the duration is `d.length` milliseonds.
 
 Durations have computed data members `ms`, `s`, `m`, `h`, `d`, `w`, `mo`, `q`, `y` that return the number of milliseconds,
-seconds, minutes, hours, days, weeks, months, quarters, and years in the duration.
+seconds, minutes, hours, days, weeks, months, quarters, and years in the duration. The long form of the duration also works, e.g. `d.seconds`.
 
 ##### Array<D> D.max(D[,D ...])
 
@@ -298,11 +298,13 @@ of the period, the complete flag will be true.
 #### Testing
 
 Current test coverage is shown below:
- 
-| File        | % Stmts | % Branch | % Funcs | % Lines |                                                                                                                                                                                                                                         
-|-------------|---------|----------|---------|---------|
-| All files   |   88.73 |    84.79 |   77.46 |   90.03 |                                                                                              
-| timewave.js |   88.73 |    84.79 |   77.46 |   90.03 |
+
+-------------|---------|----------|---------|---------|                                                                                                                                                                                                                 
+File         | % Stmts | % Branch | % Funcs | % Lines |                                                                                                                                                                                                                                                                                                        
+-------------|---------|----------|---------|---------|
+All files    |   75.94 |    74.91 |   76.62 |    75.7 |                                                                                                          
+timewave.js |   75.94 |    74.91 |   76.62 |    75.7  | 
+-------------|---------|----------|---------|---------|
 
 ### Architecture
 
@@ -318,6 +320,8 @@ We may implement a separately imported IANA look-up given sufficient demand.
 ### Change History
 
 Reverse Chronological Order
+
+2022-12-19 v0.1.8 Fixed issue with duration property lookup only working for long names, i.e. `d.seconds` not `d.s` and added more unit tests.
 
 2022-12-18 v0.1.7 Refined browser build to operate with WebWorker
 
