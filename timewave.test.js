@@ -581,6 +581,7 @@ test("D - min", () => {
 for(const [key,value] of Object.entries(D.durations)) {
     const d = D("1"+key);
     test(`D - ${key} to`,() => {
+        expect(typeof(d[key])).toBe("number");
         expect(d[key]).toBe(d.to(key));
     })
     test(`D - ${key}`,() => {

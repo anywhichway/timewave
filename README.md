@@ -1,4 +1,4 @@
-# timewave v0.1.8
+# timewave v0.1.9
 
 A tiny time simulation and date/time math library < 3.75K (minified/gzipped)
 
@@ -26,7 +26,7 @@ increments 5 seconds for every one second of real time.
 
 If you like `timewave`, check out:
 
-- [Lightview](https://lightview.dev) - Small, simple, powerful web UI and micro front end creation ... Great ideas from Svelte, React, Vue and Riot combined.
+- [lazui](https://lazui.org) - Small, simple, powerful web UI and micro front end creation ... Great ideas from htmx, lit, Vue and Riot combined.
 - [Watchlight](https://watchlight.dev) - Beyond the UI ... a light weight, comprehensive, reactive framework for business logic.
 - [Nano-memoize](https://github.com/anywhichway/nano-memoize) - Faster than fast, smaller than micro ... nano-memoizer.
 
@@ -320,6 +320,8 @@ We may implement a separately imported IANA look-up given sufficient demand.
 ### Change History
 
 Reverse Chronological Order
+
+2023-10.29 v0.1.9 Documentation updates
 
 2022-12-19 v0.1.8 Fixed issue with duration property lookup only working for long names, i.e. `d.seconds` not `d.s` and added more unit tests.
 
