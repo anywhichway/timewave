@@ -89,6 +89,7 @@ const dstOffsetAtDate = (dateInput) => {
         - dateInput.getMilliseconds()
     );
 }
+
 const parseDuration = (value) => {
     let type = typeof(value);
     if(value && type==="object") {
@@ -121,6 +122,10 @@ const parseDuration = (value) => {
 function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={}) {
     const type = typeof(date);
     if(!date || (type!=="number" && !isDate(date))) throw new TypeError(`Clock() expects a Date or number of ms not ${JSON.stringify(date)}`);
+    //const offset = type === "number" ? 0 : dstOffsetAtDate(date);
+    //console.log("offset",offset);
+    //const offset = tz ? getTimezoneOffset(date,tz) : 0;
+    //date = new Date(type==="number" ? date : date.getTime()+offset*60*1000);
     date = new Date(type==="number" ? date : date.getTime());
     const stats = {
         initialDate:new Date(date),
@@ -135,6 +140,8 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
         stats.tz = tz;
         const _toString = date.toString,
         toString = () => {
+            //const dt = new Date(date.getTime() + offset);
+            const dt = date;
             const string = _toString.call(date),
                 offset = proxy.getTimezoneOffset() / 60,
                 fraction = offset % 1,
@@ -164,7 +171,12 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
             return proxy;
         },
         addDays(value) {
-            if(value<=0) return proxy;
+            if(value===0) {
+                return proxy;
+            }
+            if(value<0) {
+                return proxy.subtractDays(-value);
+            }
             if(value<1) {
                 return proxy.addHours(value * 24);
             }
@@ -231,7 +243,12 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
             return proxy;
         },
         subtractDays(value) {
-            if(value<=0) return proxy;
+            if(value===0) {
+                return proxy;
+            }
+            if(value<0) {
+                return proxy.addDays(-value);
+            }
             if(value<1) {
                 return proxy.subtractHours(value * 24);
             }
@@ -239,7 +256,7 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 day = date.getDate(),
                 startofmonth = Math.abs(day - daysinmonth);
             if(value>startofmonth) {
-                proxy.subtractMonth(1);
+                proxy.subtractMonths(1);
                 date.setDate(1);
                 return proxy.subtractDays((value - 1) - startofmonth);
             }
@@ -337,7 +354,7 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 date.setSeconds(59);
                 date.setMilliseconds(999);
             } else if(period==="w") {
-
+                throw new Error("endOf('w') not implemented");
             } else if(period==="mo") {
                 date.setHours(59);
                 date.setMinutes(59);
@@ -345,7 +362,7 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 date.setMilliseconds(999)
                 date.setDate(proxy.daysInMonth);
             } else if(period==="q") {
-
+                throw new Error("endOf('q') not implemented");
             } else if(period==="y") {
                 date.setHours(59);
                 date.setMinutes(59);
@@ -354,10 +371,10 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 date.setDate(proxy.daysInMonth);
                 date.setMonth(11);
             }
+            return proxy;
         },
         startOf(period) {
             if(period.length>2) period = durations[period+"s"];
-            const ms = date.getTime();
             if(period==="s") {
                 date.setMilliseconds(0);
             } else if(period==="m") {
@@ -373,7 +390,7 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 date.setSeconds(0);
                 date.setMilliseconds(0);
             } else if(period==="w") {
-
+                throw new Error("startOf('w') not implemented");
             } else if(period==="mo") {
                 date.setHours(0);
                 date.setMinutes(0);
@@ -381,7 +398,7 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 date.setMilliseconds(0)
                 date.setDate(1);
             } else if(period==="q") {
-
+                throw new Error("startOf('q') not implemented");
             } else if(period==="y") {
                 date.setHours(0);
                 date.setMinutes(0);
@@ -390,12 +407,14 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
                 date.setDate(1);
                 date.setMonth(0);
             }
+            return proxy;
         },
         getTimezoneOffset() {
             const thereLocaleStr = date.toLocaleString('en-US', {timeZone: tz}),
                 thereDate = new Date(thereLocaleStr),
                 diff = thereDate.getTime() - date.getTime();
             return Math.round(date.getTimezoneOffset() - (diff /  (1000 * 60)));
+            //return getTimezoneOffset(date);
         },
         stop() {
             const cycle = stats.cycles[stats.cycles.length-1];
@@ -407,36 +426,70 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
             return proxy;
         },
         start(options={hz,tick,sync}) {
-            const {hz=60,tick=1000/hz,sync=false} = options,
-                cycle = {hz,tick,sync,time:{start:Date.now()},clockTime:{start:date.getTime()}};
+            const {hz=60,tick=1000/hz,sync=false,reverse=tick<0} = options,
+                cycle = {hz,tick,sync,time:{start:Date.now()},clockTime:{start:date.getTime()},reverse},
+                previousCycle = stats.cycles[stats.cycles.length-1];
+            if(Math.round(tick)===0) throw new Error("Clock tick cannot be or round to 0");
+            if(previousCycle && previousCycle.reverse!==reverse) {
+                alarms.forEach((alarm) => alarm.executed = false);
+            }
             stats.cycles.push(cycle);
             if(interval) this.stop();
+            let previousTime = Date.now();
             interval = setInterval(() => {
-                const now = Date.now(),
-                    clocknow = date.getTime(),
-                    time = (sync ? now : clocknow);
-                date.setTime(time);
-                proxy.plus(tick);
+                const now = Date.now();
+                if(sync) {
+                    const diff = now - previousTime;
+                    date.setTime(date.getTime() + ((reverse && tick>0) || (!reverse && tick<0) ? -1 * diff : diff));
+                }
+                previousTime = now;
+                proxy.plus(Math.round((reverse && tick>0) || (!reverse && tick<0) ? -1 * tick : tick));
                 stats.alarms.forEach((alarm) => {
                     const {condition,action,executed} = alarm;
                     if(!executed) {
+                        let execute;
                         if(condition.for instanceof Date) {
-                            if(!executed) {
-                                if (time >= condition.for.getTime()) {
-                                    alarm.executed = true;
-                                    setTimeout(() => action(proxy, alarm.executed));
-                                }
-                            }
+                            const clock = Clock(condition.for,{tz:stats.tz});
+                            execute = proxy.getTime() >= clock.getTime()
                         } else if(condition.for instanceof Period) {
-                            if(time>=condition.for.start.getTime()) {
-                                if(time>=condition.for.end.getTime()) {
-                                    alarm.executed = true;
+                            const start = Clock(condition.for.start,{tz:stats.tz}),
+                                end = Clock(condition.for.end,{tz:stats.tz}),
+                                time = proxy.getTime();
+                            execute = time >= start.getTime() && time <= end.getTime();
+                        } else {
+                            throw new TypeError(`Alarm condition.for must be a Date or Period not ${JSON.stringify(condition.for)}`);
+                        }
+                        if (execute) {
+                            alarm.executed = execute;
+                            if(typeof action==="function") setTimeout(() => action(proxy,true));
+                            const handlers = listeners["alarm"];
+                            if(handlers) {
+                                for(const handler of handlers) {
+                                    const event = {
+                                        type:"alarm",
+                                        time:date.getTime(),
+                                        oldTime,
+                                        target:proxy,
+                                        alarm:action
+                                    }
+                                    setTimeout(() => handler(event));
                                 }
-                                setTimeout(() => action(proxy,alarm.executed));
                             }
                         }
                     }
                 })
+                const handlers = listeners["tick"];
+                if(handlers) {
+                    for(const handler of handlers) {
+                        const event = {
+                            type:"tick",
+                            time:date.getTime(),
+                            oldTime,
+                            target:proxy
+                        }
+                        setTimeout(() => handler(event));
+                    }
+                }
             },1000/Math.abs(hz));
             return proxy;
         },
@@ -444,20 +497,37 @@ function Clock(date=new Date(),{tz,hz=60,tick=1000/hz,run,sync=true,alarms=[]}={
             const {hz=60,tick=1000/hz,sync,run} = options,
                 cycle = stats.cycles[stats.cycles.length-1];
             if(interval) this.stop();
+            stats.alarms.forEach((alarm) => alarm.executed=false)
             date = new Date(stats.initialDate);
             if(run) this.start({hz,tick,sync});
             return proxy;
         },
         setAlarm(condition,action,name=action.name) {
             stats.alarms.push({condition,action,name});
+            return proxy;
         }
     };
+    const listeners = {};
     const proxy = new Proxy(date,{
         get(target,property) {
             if(property==="toString") return target.toString.bind(date);
             let value = extensions[property];
             if(value!==undefined) return value
-            if(property==="length") return proxy.getTime() + proxy.getTimezoneOffset() * 1000 * 60;
+            if(property==="length") return proxy.getTime() + proxy.getTimezoneOffset() * 1000 * 60; // ?? whyc add offset?
+            if(property==="addEventListener") {
+                return (type,listener) => {
+                    const handlers = listeners[type] ||= new Set();
+                    handlers.add(listener);
+                    return proxy;
+                }
+            };
+            if(property==="removeEventListener") {
+                return (type,listener) => {
+                    const handlers = listeners[type] ||= new Set();
+                    handlers.delete(listener);
+                    return proxy;
+                }
+            };
             if(property==="weekDay") return target.getDay()+1;
             if(property==="dayOfMonth") return target.getDate();
             if(property==="dayOfYear" || property==="ordinal") {

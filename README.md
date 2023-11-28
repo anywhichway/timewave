@@ -321,7 +321,10 @@ We may implement a separately imported IANA look-up given sufficient demand.
 
 Reverse Chronological Order
 
-2023-10.29 v0.1.9 Documentation updates
+2023-11-27 v0.2.0 Added eventListener. Fixed issue with startOf and endOf not returning the clock. Made setAlarm chainable. 
+Added more unit tests. Created example for Medium article.
+
+2023-10-29 v0.1.9 Documentation updates
 
 2022-12-19 v0.1.8 Fixed issue with duration property lookup only working for long names, i.e. `d.seconds` not `d.s` and added more unit tests.
 
